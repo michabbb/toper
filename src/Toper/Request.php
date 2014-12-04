@@ -111,7 +111,7 @@ class Request
     /**
      * @throws Exception\ServerErrorException
      *
-     * @return Response
+     * @return \Guzzle\Http\Message\Response
      */
     public function send()
     {
@@ -133,12 +133,12 @@ class Request
 
                 $this->updateQueryParams($guzzleRequest);
 
-                return new Response($guzzleRequest->send());
+                return $guzzleRequest->send();
             } catch (ClientErrorResponseException $e) {
-                return new Response($e->getResponse());
+                return $e->getResponse();
             } catch (ServerErrorResponseException $e) {
                 $exception = new ServerErrorException(
-                    new Response($e->getResponse()),
+                    $e->getResponse(),
                     $e->getMessage(),
                     $e->getCode(),
                     $e

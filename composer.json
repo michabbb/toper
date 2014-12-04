@@ -1,9 +1,9 @@
 {
-    "name": "allegro/toper",
+    "name": "michabbb/toper",
     "authors": [
         {
-            "name": "Grzegorz Andrejczyn",
-            "email": "grzegorz.andrejczyn@allegro.pl"
+            "name": "Michael Bladowski",
+            "email": "mbladowski@macropage.de"
         }
     ],
     "minimum-stability": "dev",
@@ -12,7 +12,6 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~3.7.32",
-
         "squizlabs/php_codesniffer": "1.5.2",
         "phing/phing": "~2.7.0"
     },

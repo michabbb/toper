@@ -1,3 +1,11 @@
+This is a fork of allegro/toper
+===============================
+
+Changes
+-------
+
+* return guzzle reponse object (remove own response object)
+
 Toper
 =====
 
