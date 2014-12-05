@@ -13,12 +13,12 @@ class ServerErrorException extends RequestException
     private $response;
 
     /**
-     * @param Response $response
+     * @param Guzzle\Http\Message\Respons $response
      * @param int $message
      * @param int $code
      * @param $previous
      */
-    public function __construct(Response $response, $message, $code, $previous)
+    public function __construct(Guzzle\Http\Message\Respons $response, $message, $code, $previous)
     {
         parent::__construct($message, $code, $previous);
 
