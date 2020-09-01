@@ -2,26 +2,24 @@
 
 namespace Toper;
 
-class GuzzleClientFactoryTest extends \PHPUnit_Framework_TestCase
-{
-    const BASE_URL = "http://123.123.123.123";
+use PHPUnit\Framework\TestCase;
 
-    /**
-     * @var array
-     */
-    private $options = array(
-        'timeout' => 12
-    );
+class GuzzleClientFactoryTest extends TestCase {
+	public const BASE_URL = "http://123.123.123.123";
 
-    /**
-     * @test
-     */
-    public function shouldCreateClient()
-    {
-        $factory = new GuzzleClientFactory($this->options);
+	/**
+	 * @var array
+	 */
+	private $options = [
+		'timeout' => 12
+	];
 
-        $client = $factory->create(self::BASE_URL);
-
-        $this->assertEquals($this->options['timeout'], $client->getConfig('timeout'));
-    }
+	/**
+	 * @test
+	 */
+	public function shouldCreateClient(): void {
+		$factory = new GuzzleClientFactory($this->options);
+		$client = $factory->create();
+		self::assertEquals($this->options['timeout'], $client->getConfig('timeout'));
+	}
 }

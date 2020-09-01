@@ -1,6 +1,5 @@
 <phpunit backupGlobals="true"
          backupStaticAttributes="false"
-         cacheTokens="true"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
@@ -11,9 +10,7 @@
          stopOnFailure="false"
          stopOnIncomplete="false"
          stopOnSkipped="false"
-         strict="false"
          verbose="false"
-         testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
          bootstrap="./vendor/autoload.php">
 
     <testsuites>

@@ -3,175 +3,164 @@
 namespace Toper;
 
 use Guzzle\Http\Client as GuzzleClient;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ClientTest extends \PHPUnit_Framework_TestCase
-{
-    /**
-     * @var HostPoolProviderInterface
-     */
-    private $hostPoolProvider;
+class ClientTest extends TestCase {
+	/**
+	 * @var HostPoolProviderInterface
+	 */
+	private $hostPoolProvider;
 
-    /**
-     * @var GuzzleClientFactoryInterface
-     */
-    private $guzzleClientFactory;
+	/**
+	 * @var GuzzleClientFactoryInterface
+	 */
+	private $guzzleClientFactory;
 
-    /**
-     * @var GuzzleClient | \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $guzzleClientMock;
+	/**
+	 * @var GuzzleClient | MockObject
+	 */
+	private $guzzleClientMock;
 
-    /**
-     * @var HostPoolInterface
-     */
-    private $hostPool;
+	/**
+	 * @var HostPoolInterface
+	 */
+	private $hostPool;
 
-    public function setUp()
-    {
-        $this->hostPoolProvider = $this->createHostPoolProviderMock();
-        $this->hostPool = $this->createHostPoolMock();
+	public function setUp(): void {
+		$this->hostPoolProvider = $this->createHostPoolProviderMock();
+		$this->hostPool         = $this->createHostPoolMock();
 
-        $this->hostPoolProvider->expects($this->any())
-            ->method('get')
-            ->will($this->returnValue($this->hostPool));
+		$this->hostPoolProvider->expects(self::any())
+							   ->method('get')
+							   ->willReturn($this->hostPool);
 
-        $this->guzzleClientMock = $this->createGuzzleClientMock();
-        $this->guzzleClientFactory = $this->createGuzzleClientFactoryMock();
-    }
+		$this->guzzleClientMock    = $this->createGuzzleClientMock();
+		$this->guzzleClientFactory = $this->createGuzzleClientFactoryMock();
+	}
 
-    /**
-     * @test
-     */
-    public function shouldGetCreateGetRequest()
-    {
-        $url = "/test";
-        $client = $this->createClient();
-        $request = $client->get($url);
+	/**
+	 * @test
+	 */
+	public function shouldGetCreateGetRequest(): void {
+		$url     = "/test";
+		$client  = $this->createClient();
+		$request = $client->get($url);
 
-        $this->assertEquals($url, $request->getUrl());
-        $this->assertEquals($this->hostPool, $request->getHostPool());
-        $this->assertEquals(Request::GET, $request->getMethod());
-    }
-
-
-    /**
-     * @test
-     */
-    public function shouldPostCreatePostRequest()
-    {
-        $url = "/test";
-        $client = $this->createClient();
-        $request = $client->post($url);
-
-        $this->assertEquals($url, $request->getUrl());
-        $this->assertEquals($this->hostPool, $request->getHostPool());
-        $this->assertEquals(Request::POST, $request->getMethod());
-    }
+		self::assertEquals($url, $request->getUrl());
+		self::assertEquals($this->hostPool, $request->getHostPool());
+		self::assertEquals(Request::GET, $request->getMethod());
+	}
 
 
-    /**
-     * @test
-     */
-    public function shouldPutCreatePostRequest()
-    {
-        $url = "/test";
-        $client = $this->createClient();
-        $request = $client->put($url);
+	/**
+	 * @test
+	 */
+	public function shouldPostCreatePostRequest(): void {
+		$url     = "/test";
+		$client  = $this->createClient();
+		$request = $client->post($url);
 
-        $this->assertEquals($url, $request->getUrl());
-        $this->assertEquals($this->hostPool, $request->getHostPool());
-        $this->assertEquals(Request::PUT, $request->getMethod());
-    }
-
-    /**
-     * @test
-     */
-    public function shouldGetCreateGetRequestWithBinds()
-    {
-        $url = "/test";
-        $client = $this->createClient();
-        $binds = array('key' => 'value');
-        $request = $client->get($url, $binds);
-
-        $this->assertEquals($binds, $request->getBinds());
-    }
+		self::assertEquals($url, $request->getUrl());
+		self::assertEquals($this->hostPool, $request->getHostPool());
+		self::assertEquals(Request::POST, $request->getMethod());
+	}
 
 
-    /**
-     * @test
-     */
-    public function shouldPostCreatePostRequestWithBinds()
-    {
-        $url = "/test";
-        $binds = array('key' => 'value');
-        $client = $this->createClient();
-        $request = $client->post($url, $binds);
+	/**
+	 * @test
+	 */
+	public function shouldPutCreatePostRequest(): void {
+		$url     = "/test";
+		$client  = $this->createClient();
+		$request = $client->put($url);
 
-        $this->assertEquals($binds, $request->getBinds());
-    }
+		self::assertEquals($url, $request->getUrl());
+		self::assertEquals($this->hostPool, $request->getHostPool());
+		self::assertEquals(Request::PUT, $request->getMethod());
+	}
 
+	/**
+	 * @test
+	 */
+	public function shouldGetCreateGetRequestWithBinds(): void {
+		$url     = "/test";
+		$client  = $this->createClient();
+		$binds   = ['key' => 'value'];
+		$request = $client->get($url, $binds);
 
-    /**
-     * @test
-     */
-    public function shouldPutCreatePostRequestWithBinds()
-    {
-        $url = "/test";
-        $binds = array('key' => 'value');
-        $client = $this->createClient();
-        $request = $client->put($url, $binds);
-
-        $this->assertEquals($binds, $request->getBinds());
-    }
+		self::assertEquals($binds, $request->getBinds());
+	}
 
 
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject | HostPoolProviderInterface
-     */
-    private function createHostPoolProviderMock()
-    {
-        return $this->getMockBuilder('Toper\HostPoolProviderInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
+	/**
+	 * @test
+	 */
+	public function shouldPostCreatePostRequestWithBinds(): void {
+		$url     = "/test";
+		$binds   = ['key' => 'value'];
+		$client  = $this->createClient();
+		$request = $client->post($url, $binds);
 
-    private function createClient()
-    {
-        return new Client($this->hostPoolProvider, $this->guzzleClientFactory);
-    }
+		self::assertEquals($binds, $request->getBinds());
+	}
 
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject | HostPoolInterface
-     */
-    private function createHostPoolMock()
-    {
-        return $this->getMockBuilder('Toper\HostPoolInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
 
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject | GuzzleClientFactoryInterface
-     */
-    private function createGuzzleClientFactoryMock()
-    {
-        $clientFactory = $this->getMockBuilder('Toper\GuzzleClientFactoryInterface')
-            ->getMock();
+	/**
+	 * @test
+	 */
+	public function shouldPutCreatePostRequestWithBinds(): void {
+		$url     = "/test";
+		$binds   = ['key' => 'value'];
+		$client  = $this->createClient();
+		$request = $client->put($url, $binds);
 
-        $clientFactory->expects($this->any())
-            ->method('create')
-            ->will($this->returnValue($this->guzzleClientMock));
+		self::assertEquals($binds, $request->getBinds());
+	}
 
-        return $clientFactory;
-    }
 
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject | GuzzleClient
-     */
-    private function createGuzzleClientMock()
-    {
-        return $this->getMockBuilder('Guzzle\Http\Client')
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
+	/**
+	 * @return MockObject | HostPoolProviderInterface
+	 */
+	private function createHostPoolProviderMock() {
+		return $this->getMockBuilder('Toper\HostPoolProviderInterface')
+					->disableOriginalConstructor()
+					->getMock();
+	}
+
+	private function createClient(): Client {
+		return new Client($this->hostPoolProvider, $this->guzzleClientFactory);
+	}
+
+	/**
+	 * @return MockObject | HostPoolInterface
+	 */
+	private function createHostPoolMock() {
+		return $this->getMockBuilder('Toper\HostPoolInterface')
+					->disableOriginalConstructor()
+					->getMock();
+	}
+
+	/**
+	 * @return MockObject | GuzzleClientFactoryInterface
+	 */
+	private function createGuzzleClientFactoryMock() {
+		$clientFactory = $this->getMockBuilder('Toper\GuzzleClientFactoryInterface')
+							  ->getMock();
+
+		$clientFactory->expects(self::any())
+					  ->method('create')
+					  ->will(self::returnValue($this->guzzleClientMock));
+
+		return $clientFactory;
+	}
+
+	/**
+	 * @return MockObject | GuzzleClient
+	 */
+	private function createGuzzleClientMock() {
+		return $this->getMockBuilder('Guzzle\Http\Client')
+					->disableOriginalConstructor()
+					->getMock();
+	}
 }

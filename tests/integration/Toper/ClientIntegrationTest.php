@@ -1,199 +1,200 @@
-<?php
+<?php /** @noinspection PhpIllegalPsrClassPathInspection */
 
 namespace Toper;
 
-class ClientIntegrationTest extends \PHPUnit_Framework_TestCase
-{
-    const HOST1 = "http://localhost:7820";
+use PHPUnit\Framework\TestCase;
 
-    const HOST2 = "http://localhost:7850";
+class ClientIntegrationTest extends TestCase {
+	public const HOST1 = "http://localhost:7820";
 
-    const HOST3 = "http://localhost:7800";
+	public const HOST2 = "http://localhost:7850";
 
-    const HOST4 = "http://localhost:7900";
+	public const HOST3 = "http://localhost:7800";
 
-    const HOST_404 = "http://localhost:7844";
+	public const HOST4 = "http://localhost:7900";
 
-    const HOST_302 = "http://localhost:7832";
+	public const HOST_404 = "http://localhost:7844";
 
-    /**
-     * @test
-     */
-    public function shouldCallByGetMethod()
-    {
-        $hostPoolProvider = new StaticHostPoolProvider(array(self::HOST1));
-        $client = new Client($hostPoolProvider, new GuzzleClientFactory());
+	public const HOST_302 = "http://localhost:7832";
 
-        $request = $client->get("/request");
-        $response = $request->send();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('ok', $response->getBody());
-    }
+	/**
+	 * @test
+	 * @throws Exception\ServerErrorException
+	 */
+	public function shouldCallByGetMethod(): void {
+		$hostPoolProvider = new StaticHostPoolProvider([self::HOST1]);
+		$client           = new Client($hostPoolProvider, new GuzzleClientFactory());
 
-    /**
-     * @test
-     */
-    public function shouldBindUrlStringParametersMethod()
-    {
-        $hostPoolProvider = new StaticHostPoolProvider(array(self::HOST4));
-        $client = new Client($hostPoolProvider, new GuzzleClientFactory());
-        $method = 'get';
-        $request = $client->get("/should_be_{method}", array('method' => $method));
-        $response = $request->send();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('ok', $response->getBody());
-    }
+		$request  = $client->get("/request");
+		$response = $request->send();
+		self::assertEquals(200, $response->getStatusCode());
+		self::assertEquals('ok', $response->getBody());
+	}
 
-    /**
-     * @test
-     */
-    public function shouldSendRequestPrams()
-    {
-        $hostPoolProvider = new StaticHostPoolProvider(array(self::HOST4));
-        $client = new Client($hostPoolProvider, new GuzzleClientFactory());
+	/**
+	 * @test
+	 * @throws Exception\ServerErrorException
+	 */
+	public function shouldBindUrlStringParametersMethod(): void {
+		$hostPoolProvider = new StaticHostPoolProvider([self::HOST4]);
+		$client           = new Client($hostPoolProvider, new GuzzleClientFactory());
+		$method           = 'get';
+		$request          = $client->get("/should_be_{method}", ['method' => $method]);
+		$response         = $request->send();
+		self::assertEquals(200, $response->getStatusCode());
+		self::assertEquals('ok', $response->getBody());
+	}
 
-        $request = $client->get("/should_have_parameter");
-        $request->addQueryParam("key", "value");
-        $response = $request->send();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('ok', $response->getBody());
-    }
+	/**
+	 * @test
+	 * @throws Exception\ServerErrorException
+	 */
+	public function shouldSendRequestPrams(): void {
+		$hostPoolProvider = new StaticHostPoolProvider([self::HOST4]);
+		$client           = new Client($hostPoolProvider, new GuzzleClientFactory());
 
-    /**
-     * @test
-     */
-    public function shouldReturn4xxResponse()
-    {
+		$request = $client->get("/should_have_parameter");
+		$request->addQueryParam("key", "value");
+		$response = $request->send();
+		self::assertEquals(200, $response->getStatusCode());
+		self::assertEquals('ok', $response->getBody());
+	}
 
-        $hostPoolProvider = new StaticHostPoolProvider(array(self::HOST_404));
-        $client = new Client($hostPoolProvider, new GuzzleClientFactory());
+	/**
+	 * @test
+	 * @throws Exception\ServerErrorException
+	 */
+	public function shouldReturn4xxResponse(): void {
 
-        $request = $client->get("/request");
+		$hostPoolProvider = new StaticHostPoolProvider([self::HOST_404]);
+		$client           = new Client($hostPoolProvider, new GuzzleClientFactory());
 
-        $response = $request->send();
-        $this->assertEquals(404, $response->getStatusCode());
-        $this->assertEquals('not found', $response->getBody());
-    }
+		$request = $client->get("/request");
 
-    /**
-     * @test
-     */
-    public function shouldReturn3xxResponse()
-    {
+		$response = $request->send();
+		self::assertEquals(404, $response->getStatusCode());
+		self::assertEquals('not found', $response->getBody());
+	}
 
-        $hostPoolProvider = new StaticHostPoolProvider(array(self::HOST_302));
-        $client = new Client($hostPoolProvider, new GuzzleClientFactory());
+	/**
+	 * @test
+	 * @throws Exception\ServerErrorException
+	 */
+	public function shouldReturn3xxResponse(): void {
 
-        $request = $client->get("/request");
+		$hostPoolProvider = new StaticHostPoolProvider([self::HOST_302]);
+		$client           = new Client($hostPoolProvider, new GuzzleClientFactory());
 
-        $response = $request->send();
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('redirect', $response->getBody());
-    }
+		$request = $client->get("/request");
 
-    /**
-     * @test
-     */
-    public function shouldThrowConnectionErrorExceptionIfIsConnectionRefused()
-    {
-        $hostPoolProvider = new StaticHostPoolProvider(array('http://localhost:6788'));
-        $client = new Client($hostPoolProvider, new GuzzleClientFactory());
+		$response = $request->send();
+		self::assertEquals(302, $response->getStatusCode());
+		self::assertEquals('redirect', $response->getBody());
+	}
 
-        $request = $client->get("/request");
+	/**
+	 * @test
+	 * @throws Exception\ServerErrorException
+	 */
+	public function shouldThrowConnectionErrorExceptionIfIsConnectionRefused(): void {
+		$hostPoolProvider = new StaticHostPoolProvider(['http://localhost:6788']);
+		$client           = new Client($hostPoolProvider, new GuzzleClientFactory());
 
-        $this->setExpectedException('\Toper\Exception\ConnectionErrorException');
+		$request = $client->get("/request");
 
-        $request->send();
-    }
+		$this->expectException('\Toper\Exception\ConnectionErrorException');
 
-    /**
-     * @test
-     */
-    public function shouldCallByPostMethod()
-    {
-        $hostPoolProvider = new StaticHostPoolProvider(array(self::HOST1));
-        $client = new Client($hostPoolProvider, new GuzzleClientFactory());
+		$request->send();
+	}
 
-        $request = $client->post("/request");
+	/**
+	 * @test
+	 * @throws Exception\ServerErrorException
+	 */
+	public function shouldCallByPostMethod(): void {
+		$hostPoolProvider = new StaticHostPoolProvider([self::HOST1]);
+		$client           = new Client($hostPoolProvider, new GuzzleClientFactory());
 
-        $response = $request->send();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('ok', $response->getBody());
-    }
+		$request = $client->post("/request");
 
-    /**
-     * @test
-     */
-    public function shouldCallNextHostIfFirstFailed()
-    {
-        $hostPoolProvider = new StaticHostPoolProvider(array(self::HOST2, self::HOST2, self::HOST1));
-        $client = new Client($hostPoolProvider, new GuzzleClientFactory());
+		$response = $request->send();
+		self::assertEquals(200, $response->getStatusCode());
+		self::assertEquals('ok', $response->getBody());
+	}
 
-        $request = $client->get("/request");
+	/**
+	 * @test
+	 * @throws Exception\ServerErrorException
+	 */
+	public function shouldCallNextHostIfFirstFailed(): void {
+		$hostPoolProvider = new StaticHostPoolProvider([self::HOST2, self::HOST2, self::HOST1]);
+		$client           = new Client($hostPoolProvider, new GuzzleClientFactory());
 
-        $response = $request->send();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('ok', $response->getBody());
-    }
+		$request = $client->get("/request");
 
-    /**
-     * @test
-     */
-    public function shouldSendPostRequest()
-    {
-        $hostPoolProvider = new StaticHostPoolProvider(array(self::HOST4, self::HOST1));
-        $client = new Client($hostPoolProvider, new GuzzleClientFactory());
+		$response = $request->send();
+		self::assertEquals(200, $response->getStatusCode());
+		self::assertEquals('ok', $response->getBody());
+	}
 
-        $request = $client->post("/should_be_post");
-        $request->setBody("data");
+	/**
+	 * @test
+	 * @throws Exception\ServerErrorException
+	 */
+	public function shouldSendPostRequest(): void {
+		$hostPoolProvider = new StaticHostPoolProvider([self::HOST4, self::HOST1]);
+		$client           = new Client($hostPoolProvider, new GuzzleClientFactory());
 
-        $response = $request->send();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('ok', $response->getBody());
-    }
+		$request = $client->post("/should_be_post");
+		$request->setBody("data");
+
+		$response = $request->send();
+		self::assertEquals(200, $response->getStatusCode());
+		self::assertEquals('ok', $response->getBody());
+	}
 
 
-    /**
-     * @test
-     */
-    public function shouldSendPutRequest()
-    {
-        $hostPoolProvider = new StaticHostPoolProvider(array(self::HOST4, self::HOST1));
-        $client = new Client($hostPoolProvider, new GuzzleClientFactory());
+	/**
+	 * @test
+	 * @throws Exception\ServerErrorException
+	 */
+	public function shouldSendPutRequest(): void {
+		$hostPoolProvider = new StaticHostPoolProvider([self::HOST4, self::HOST1]);
+		$client           = new Client($hostPoolProvider, new GuzzleClientFactory());
 
-        $request = $client->put("/should_be_put");
-        $request->setBody("data");
+		$request = $client->put("/should_be_put");
+		$request->setBody("data");
 
-        $response = $request->send();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('ok', $response->getBody());
-    }
+		$response = $request->send();
+		self::assertEquals(200, $response->getStatusCode());
+		self::assertEquals('ok', $response->getBody());
+	}
 
-    /**
-     * @test
-     */
-    public function shouldSendHeaderSetByGuzzleClientOptions()
-    {
+	/**
+	 * @test
+	 * @throws Exception\ServerErrorException
+	 */
+	public function shouldSendHeaderSetByGuzzleClientOptions(): void {
 
-        $hostPoolProvider = new StaticHostPoolProvider(array(self::HOST4, self::HOST1));
-        $client = new Client(
-            $hostPoolProvider,
-            new GuzzleClientFactory(
-                array(
-                    'request.options' => array(
-                        'headers' => array(
-                            'Content-Type' => 'application/json'
-                        )
-                    )
-                )
-            )
-        );
+		$hostPoolProvider = new StaticHostPoolProvider([self::HOST4, self::HOST1]);
+		$client           = new Client(
+			$hostPoolProvider,
+			new GuzzleClientFactory(
+				[
+					'request.options' => [
+						'headers' => [
+							'Content-Type' => 'application/json'
+						]
+					]
+				]
+			)
+		);
 
-        $request = $client->post("/should_be_post_application_json");
-        $request->setBody("data");
+		$request = $client->post("/should_be_post_application_json");
+		$request->setBody("data");
 
-        $response = $request->send();
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('ok', $response->getBody());
-    }
+		$response = $request->send();
+		self::assertEquals(200, $response->getStatusCode());
+		self::assertEquals('ok', $response->getBody());
+	}
 }

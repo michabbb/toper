@@ -2,23 +2,24 @@
 
 namespace Toper\Exception;
 
-class ServerErrorException extends RequestException
-{
-    /**
-     * @var \Guzzle\Http\Message\Response $response
-     */
-    private $response;
+use Guzzle\Http\Message\Response;
 
-    /**
-     * @param \Guzzle\Http\Message\Response $response
-     * @param int $message
-     * @param int $code
-     * @param $previous
-     */
-    public function __construct(\Guzzle\Http\Message\Response $response, $message, $code, $previous)
-    {
-        parent::__construct($message, $code, $previous);
+class ServerErrorException extends RequestException {
+	/**
+	 * @var Response $response
+	 */
+	private $response;
 
-        $this->response = $response;
-    }
+	/**
+	 * @param Response $response
+	 * @param int                           $message
+	 * @param int                           $code
+	 * @param                               $previous
+	 */
+	public function __construct(Response $response, int $message, int $code, $previous) {
+		parent::__construct($message, $code, $previous);
+
+		/** @noinspection UnusedConstructorDependenciesInspection */
+		$this->response = $response;
+	}
 }

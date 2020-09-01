@@ -2,32 +2,30 @@
 
 namespace Toper;
 
-class StaticHostPoolProviderTest extends \PHPUnit_Framework_TestCase
-{
-    const HOST_1 = "http://123.123.123.123";
-    const HOST_2 = "http://234.123.123.123";
+use PHPUnit\Framework\TestCase;
 
-    /**
-     * @test
-     */
-    public function shouldCreateNewHostPool()
-    {
-        $hosts = array(self::HOST_1, self::HOST_2);
-        $instance = new StaticHostPoolProvider($hosts);
+class StaticHostPoolProviderTest extends TestCase {
+	public const HOST_1 = "http://123.123.123.123";
+	public const HOST_2 = "http://234.123.123.123";
 
-        $hostPool = $instance->get();
-        $this->assertHostsArrays($hosts, $hostPool->toArray());
-    }
+	/**
+	 * @test
+	 */
+	public function shouldCreateNewHostPool(): void {
+		$hosts    = [self::HOST_1, self::HOST_2];
+		$instance = new StaticHostPoolProvider($hosts);
 
-    /**
-     * @param string $hosts1
-     * @param string $hosts2
-     */
-    private function assertHostsArrays($hosts1, $hosts2)
-    {
-        sort($hosts1);
-        sort($hosts2);
+		$hostPool = $instance->get();
+		$this->assertHostsArrays($hosts, $hostPool->toArray());
+	}
 
-        $this->assertEquals($hosts1, $hosts2);
-    }
+	/**
+	 * @param array $hosts1
+	 * @param array $hosts2
+	 */
+	private function assertHostsArrays(array $hosts1, array $hosts2): void {
+		sort($hosts1);
+		sort($hosts2);
+		self::assertEquals($hosts1, $hosts2);
+	}
 }

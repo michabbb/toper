@@ -2,6 +2,5 @@
 
 namespace Toper\Exception;
 
-class NextHostException extends \Exception
-{
+class NextHostException extends \Exception {
 }

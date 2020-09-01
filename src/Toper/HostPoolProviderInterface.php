@@ -2,7 +2,6 @@
 
 namespace Toper;
 
-interface HostPoolProviderInterface
-{
-    public function get();
+interface HostPoolProviderInterface {
+	public function get();
 }

@@ -2,6 +2,5 @@
 
 namespace Toper\Exception;
 
-class RequestException extends \Exception
-{
+class RequestException extends \Exception {
 }
