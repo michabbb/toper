@@ -6,7 +6,7 @@ class StaticHostPoolProvider implements HostPoolProviderInterface {
 	/**
 	 * @var array
 	 */
-	private $hosts;
+	private array $hosts;
 
 	/**
 	 * @param array $hosts

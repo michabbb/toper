@@ -3,6 +3,7 @@
 namespace Toper;
 
 use PHPUnit\Framework\TestCase;
+use Toper\Exception\NextHostException;
 
 class SimpleHostPoolTest extends TestCase {
 	public const HOST_1 = "http://123.232.232.123";
@@ -60,7 +61,7 @@ class SimpleHostPoolTest extends TestCase {
 
 		$hostPool->getNext();
 
-		$this->expectException('Toper\Exception\NextHostException');
+		$this->expectException(NextHostException::class);
 		$hostPool->getNext();
 	}
 

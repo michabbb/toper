@@ -2,15 +2,18 @@
 
 namespace Toper;
 
-use Guzzle\Http\Exception\ClientErrorResponseException;
-use Guzzle\Http\Exception\CurlException;
-use Guzzle\Http\Exception\ServerErrorResponseException;
-use Guzzle\Http\Message\EntityEnclosingRequest;
-use Guzzle\Http\Message\Response;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\ServerException;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Toper\Exception\ConnectionErrorException;
 use Toper\Exception\ServerErrorException;
-use \Guzzle\Http\Message\Request as GuzzleRequest;
-use Guzzle\Http\ClientInterface as GuzzleClientInterface;
+use GuzzleHttp\Psr7\Request as GuzzleRequest;
+use GuzzleHttp\ClientInterface as GuzzleClientInterface;
+use function GuzzleHttp\Psr7\build_query;
+use function GuzzleHttp\Psr7\stream_for;
+
 
 class Request {
 	public const GET = "get";
@@ -22,37 +25,37 @@ class Request {
 	/**
 	 * @var HostPoolInterface
 	 */
-	private $hostPool;
+	private HostPoolInterface $hostPool;
 
 	/**
 	 * @var string
 	 */
-	private $url;
+	private string $url;
 
 	/**
 	 * @var string
 	 */
-	private $method;
+	private string $method;
 
 	/**
 	 * @var GuzzleClientInterface
 	 */
-	private $guzzleClient;
+	private GuzzleClientInterface $guzzleClient;
 
 	/**
 	 * @var string
 	 */
-	private $body;
+	private string $body;
 
 	/**
 	 * @var array
 	 */
-	private $queryParams = [];
+	private array $queryParams = [];
 
 	/**
 	 * @var array
 	 */
-	private $binds;
+	private array $binds;
 
 	/**
 	 * @param string                $method
@@ -105,40 +108,27 @@ class Request {
 	}
 
 	/**
-	 * @return Response
+	 * @return ResponseInterface
 	 * @throws Exception\ServerErrorException|ConnectionErrorException
 	 *
 	 */
-	public function send(): Response {
+	public function send(): ResponseInterface {
 		$exception = null;
 
 		while ($this->hostPool->hasNext()) {
 			try {
-				$this->guzzleClient->setBaseUrl($this->hostPool->getNext());
-
-				/** @var GuzzleRequest $guzzleRequest */
-				$guzzleRequest = $this->guzzleClient->{$this->method}(
-					[$this->url, $this->binds]
-				);
-
-				if ($this->body && $guzzleRequest instanceof EntityEnclosingRequest) {
-					/** @var EntityEnclosingRequest $guzzleRequest */
-					$guzzleRequest->setBody($this->body);
-				}
-
-				$this->updateQueryParams($guzzleRequest);
-
-				return $guzzleRequest->send();
-			} catch (ClientErrorResponseException $e) {
+				$guzzleRequest = new GuzzleRequest($this->method, $this->hostPool->getNext().$this->url.build_query($this->queryParams), $this->binds, $this->body);
+				return $this->guzzleClient->send($guzzleRequest);
+			} catch (ClientException $e) {
 				return $e->getResponse();
-			} catch (ServerErrorResponseException $e) {
+			} catch (ServerException $e) {
 				$exception = new ServerErrorException(
 					$e->getResponse(),
 					$e->getMessage(),
 					$e->getCode(),
 					$e
 				);
-			} catch (CurlException $e) {
+			} catch (GuzzleException $e) {
 				$exception = new ConnectionErrorException($e->getMessage(), $e->getCode(), $e);
 			}
 		}
@@ -159,14 +149,5 @@ class Request {
 	 */
 	public function addQueryParam(string $name, $value): void {
 		$this->queryParams[$name] = $value;
-	}
-
-	/**
-	 * @param GuzzleRequest $request
-	 */
-	private function updateQueryParams(GuzzleRequest $request): void {
-		foreach ($this->queryParams as $name => $value) {
-			$request->getQuery()->add($name, $value);
-		}
 	}
 }

@@ -10,7 +10,7 @@ class GuzzleClientFactoryTest extends TestCase {
 	/**
 	 * @var array
 	 */
-	private $options = [
+	private array $options = [
 		'timeout' => 12
 	];
 

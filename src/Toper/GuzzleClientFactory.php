@@ -2,13 +2,11 @@
 
 namespace Toper;
 
-use Guzzle\Http\Client as GuzzleClient;
-
 class GuzzleClientFactory implements GuzzleClientFactoryInterface {
 	/**
 	 * @var array
 	 */
-	private $guzzleClientOptions;
+	private array $guzzleClientOptions;
 
 	/**
 	 * @param array $guzzleClientOptions
@@ -18,9 +16,9 @@ class GuzzleClientFactory implements GuzzleClientFactoryInterface {
 	}
 
 	/**
-	 * @return GuzzleClient
+	 * @return \GuzzleHttp\Client
 	 */
-	public function create(): GuzzleClient {
-		return new GuzzleClient('', $this->guzzleClientOptions);
+	public function create(): \GuzzleHttp\Client {
+		return new \GuzzleHttp\Client($this->guzzleClientOptions);
 	}
 }

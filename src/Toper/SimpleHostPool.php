@@ -8,12 +8,12 @@ class SimpleHostPool implements HostPoolInterface {
 	/**
 	 * @var array
 	 */
-	private $hosts;
+	private array $hosts;
 
 	/**
 	 * @var int
 	 */
-	private $index = 0;
+	private int $index = 0;
 
 	/**
 	 * @param array $hosts

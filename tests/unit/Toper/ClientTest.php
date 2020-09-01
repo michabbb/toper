@@ -2,7 +2,7 @@
 
 namespace Toper;
 
-use Guzzle\Http\Client as GuzzleClient;
+use GuzzleHttp\Client as GuzzleClient;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -31,7 +31,7 @@ class ClientTest extends TestCase {
 		$this->hostPoolProvider = $this->createHostPoolProviderMock();
 		$this->hostPool         = $this->createHostPoolMock();
 
-		$this->hostPoolProvider->expects(self::any())
+		$this->hostPoolProvider->expects(self::once())
 							   ->method('get')
 							   ->willReturn($this->hostPool);
 
@@ -123,7 +123,7 @@ class ClientTest extends TestCase {
 	 * @return MockObject | HostPoolProviderInterface
 	 */
 	private function createHostPoolProviderMock() {
-		return $this->getMockBuilder('Toper\HostPoolProviderInterface')
+		return $this->getMockBuilder(HostPoolProviderInterface::class)
 					->disableOriginalConstructor()
 					->getMock();
 	}
@@ -136,7 +136,7 @@ class ClientTest extends TestCase {
 	 * @return MockObject | HostPoolInterface
 	 */
 	private function createHostPoolMock() {
-		return $this->getMockBuilder('Toper\HostPoolInterface')
+		return $this->getMockBuilder(HostPoolInterface::class)
 					->disableOriginalConstructor()
 					->getMock();
 	}
@@ -145,12 +145,11 @@ class ClientTest extends TestCase {
 	 * @return MockObject | GuzzleClientFactoryInterface
 	 */
 	private function createGuzzleClientFactoryMock() {
-		$clientFactory = $this->getMockBuilder('Toper\GuzzleClientFactoryInterface')
-							  ->getMock();
+		$clientFactory = $this->createMock(GuzzleClientFactoryInterface::class);
 
-		$clientFactory->expects(self::any())
+		$clientFactory->expects(self::once())
 					  ->method('create')
-					  ->will(self::returnValue($this->guzzleClientMock));
+					  ->willReturn($this->guzzleClientMock);
 
 		return $clientFactory;
 	}
@@ -159,7 +158,7 @@ class ClientTest extends TestCase {
 	 * @return MockObject | GuzzleClient
 	 */
 	private function createGuzzleClientMock() {
-		return $this->getMockBuilder('Guzzle\Http\Client')
+		return $this->getMockBuilder(GuzzleClient::class)
 					->disableOriginalConstructor()
 					->getMock();
 	}

@@ -2,21 +2,21 @@
 
 namespace Toper\Exception;
 
-use Guzzle\Http\Message\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class ServerErrorException extends RequestException {
 	/**
-	 * @var Response $response
+	 * @var ResponseInterface $response
 	 */
-	private $response;
+	private ResponseInterface $response;
 
 	/**
-	 * @param Response $response
+	 * @param ResponseInterface             $response
 	 * @param int                           $message
 	 * @param int                           $code
 	 * @param                               $previous
 	 */
-	public function __construct(Response $response, int $message, int $code, $previous) {
+	public function __construct(ResponseInterface $response, int $message, int $code, $previous) {
 		parent::__construct($message, $code, $previous);
 
 		/** @noinspection UnusedConstructorDependenciesInspection */

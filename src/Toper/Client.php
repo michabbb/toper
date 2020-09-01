@@ -6,12 +6,12 @@ class Client implements ClientInterface {
 	/**
 	 * @var HostPoolProviderInterface
 	 */
-	private $hostPoolProvider;
+	private HostPoolProviderInterface $hostPoolProvider;
 
 	/**
 	 * @var GuzzleClientFactoryInterface
 	 */
-	private $guzzleClientFactory;
+	private GuzzleClientFactoryInterface $guzzleClientFactory;
 
 	/**
 	 * @param HostPoolProviderInterface    $hostPoolProvider
